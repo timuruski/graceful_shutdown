@@ -1,28 +1,33 @@
-# Catches +INT+ and +TERM+ and allows the task/program to finish execution
-# before handling the interrupt safely.
+# Executes a block of code, translating signals into a Shutdown
+# exception that can be rescued to signal safe shutdown.
 #
-# Usage:
-#   WithGracefulShutdown do
-#     begin
-#       loop do
-#         print '.'
-#         sleep 0.5
+# ## Example:
+#
+#     WithGracefulShutdown do
+#       begin
+#         loop do
+#           print '.'
+#           sleep 0.5
+#         end
+#       rescue Shutdown => shutdown
+#         puts "\ngoodbye"
+#         shutdown.continue
 #       end
-#     rescue Shutdown => shutdown
-#       puts "\ngoodbye"
-#       shutdown.continue
 #     end
-#   end
-
+#
+# @param [String] *signals Names of signals to handle.
+# @param [Proc] &block Block of code to run while handling signals.
 def WithGracefulShutdown(*signals, &block)
   GracefulShutdown.new.handle_signals(*signals, &block)
 end
 
 class Shutdown < RuntimeError
+  # Re-raises the exception, continuing shutdown.
   def continue
     raise self
   end
 
+  # No-Op, provides clarity that shutdown is being ignored.
   def ignore
     # No-Op, provided for clarity.
   end
@@ -32,8 +37,12 @@ class GracefulShutdown
   DEFAULT_SIGNALS = ['INT', 'TERM']
   HANDLER = proc { raise Shutdown }
 
-  # Execute a block of code with signal handlers.
-  def handle_signals(*signals)
+  # Executes a block of code, translating signals into a Shutdown
+  # exception that can be rescued to signal safe shutdown.
+  #
+  # @param [String] *signals Names of signals to handle.
+  # @param [Proc] &block Block of code to run while handling signals.
+  def handle_signals(*signals, &block)
     signals = DEFAULT_SIGNALS if signals.empty?
 
     handlers = setup(signals)
