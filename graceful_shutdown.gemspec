@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.date        = '2014-05-24'
   gem.summary     = 'A tiny helper for handling signals.'
   gem.description = 'You can use GracefulShutdown to catch signals and safely shutdown your program.'
-  gem.homepage    = 'https://rubygemgem.org/graceful_shutdown'
+  gem.homepage    = 'https://rubygems.org/gems/graceful_shutdown'
 
   gem.files       = ['lib/graceful_shutdown.rb']
   gem.test_files  = gem.files.grep(/spec\//)
