@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.author      = 'Tim Uruski'
   gem.email       = 'nerd@timuruski.net'
   gem.date        = '2014-05-24'
-  gem.summary     = 'A tiny helper for handling signalgem.'
+  gem.summary     = 'A tiny helper for handling signals.'
   gem.description = 'You can use GracefulShutdown to catch signals and safely shutdown your program.'
   gem.homepage    = 'https://rubygemgem.org/graceful_shutdown'
 

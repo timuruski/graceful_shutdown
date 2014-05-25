@@ -20,22 +20,25 @@ exception and perform any necessary steps for a safe shutdown. Once
 handled, the `continue` method can be called to re-raise the exception
 and continue the shutdown.
 
-    class Worker < Struct.new(:jobs_queue)
-      def work
-        job = jobs_queue.pop
-        # work...
-      rescue Shutdown => shutdown
-        jobs_queue.push job if job.incomplete?
-        shutdown.continue
-      end
-    end
 
-    require 'graceful_shutdown'
+```ruby
+class Worker < Struct.new(:jobs_queue)
+  def work
+    job = jobs_queue.pop
+    # work...
+  rescue Shutdown => shutdown
+    jobs_queue.push job if job.incomplete?
+    shutdown.continue
+  end
+end
 
-    WithGracefulShutdown do
-      jobs = Queue.new
-      Worker.new(jobs).start
-    end
+require 'graceful_shutdown'
+
+WithGracefulShutdown do
+  jobs = Queue.new
+  Worker.new(jobs).start
+end
+```
 
 As the blog posts continue, there will likely be some enhancements to
 this gem.
