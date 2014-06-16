@@ -3,27 +3,27 @@ require 'graceful_shutdown'
 
 describe GracefulShutdown do
   def ruby_proc(code)
-   RubyProcess.new(code, '-r./lib/graceful_shutdown')
+    RubyProcess.new(code, '-r./lib/graceful_shutdown')
   end
 
   it "exits without error" do
     ruby = ruby_proc <<-EOS
       GracefulShutdown.new.handle_signals do
-        wait_for_interrupt 1.0
+        wait_for_signal 1.0
         raise 'No Interrupt received'
       end
     EOS
 
     ruby.run_and_send('INT')
 
-    expect(ruby).to exit_without_error
+    expect(ruby).to be_successful
   end
 
   it "raises a Shutdown exception" do
     ruby = ruby_proc <<-EOS
       GracefulShutdown.new.handle_signals do
         begin
-          wait_for_interrupt 1.0
+          wait_for_signal 1.0
         rescue Shutdown
           puts 'shutdown received'
           exit
@@ -35,7 +35,7 @@ describe GracefulShutdown do
 
     ruby.run_and_send('INT')
 
-    expect(ruby).to exit_without_error
+    expect(ruby).to be_successful
     expect(ruby.output).to match(/shutdown received/)
   end
 
@@ -43,7 +43,7 @@ describe GracefulShutdown do
     ruby = ruby_proc <<-EOS
       GracefulShutdown.new.handle_signals do
         begin
-          wait_for_interrupt 1.0
+          wait_for_signal 1.0
         rescue Shutdown => shutdown
           raise shutdown
         else
@@ -54,7 +54,7 @@ describe GracefulShutdown do
 
     ruby.run_and_send('INT')
 
-    expect(ruby).to exit_without_error
+    expect(ruby).to be_successful
   end
 
   it "restores existing signal handlers" do
@@ -68,25 +68,25 @@ describe GracefulShutdown do
         # work
       end
 
-      wait_for_interrupt 1.0
+      wait_for_signal 1.0
     EOS
 
     ruby.run_and_send('INT')
 
-    expect(ruby).to exit_without_error
+    expect(ruby).to be_successful
     expect(ruby.output).to match(/default interrupt/)
   end
 
   it "handles signals other than interrupt" do
     ruby = ruby_proc <<-EOS
       GracefulShutdown.new.handle_signals('USR2') do
-        wait_for_interrupt 1.0
+        wait_for_signal 1.0
         raise 'No Interrupt received'
       end
     EOS
 
     ruby.run_and_send('USR2')
 
-    expect(ruby).to exit_without_error
+    expect(ruby).to be_successful
   end
 end

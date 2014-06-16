@@ -49,7 +49,6 @@ class GracefulShutdown
     yield if block_given?
     teardown(handlers)
   rescue Shutdown
-    teardown(handlers)
     exit
   end
 
