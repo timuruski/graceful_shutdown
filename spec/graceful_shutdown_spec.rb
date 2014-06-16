@@ -2,28 +2,24 @@ require 'spec_helper'
 require 'graceful_shutdown'
 
 describe GracefulShutdown do
-  def ruby_proc(code)
-    RubyProcess.new(code, '-r./lib/graceful_shutdown')
-  end
-
   it "exits without error" do
-    ruby = ruby_proc <<-EOS
+    test = RubyBlock.new do |helper|
       GracefulShutdown.new.handle_signals do
-        wait_for_signal 1.0
+        helper.wait_for_signal 1.0
         raise 'No Interrupt received'
       end
-    EOS
+    end
 
-    ruby.run_and_send('INT')
+    test.run_and_send('INT')
 
-    expect(ruby).to be_successful
+    expect(test).to be_successful
   end
 
   it "raises a Shutdown exception" do
-    ruby = ruby_proc <<-EOS
+    test = RubyBlock.new do |helper|
       GracefulShutdown.new.handle_signals do
         begin
-          wait_for_signal 1.0
+          helper.wait_for_signal 1.0
         rescue Shutdown
           puts 'shutdown received'
           exit
@@ -31,34 +27,34 @@ describe GracefulShutdown do
           raise 'No Interrupt received'
         end
       end
-    EOS
+    end
 
-    ruby.run_and_send('INT')
+    test.run_and_send('INT')
 
-    expect(ruby).to be_successful
-    expect(ruby.output).to match(/shutdown received/)
+    expect(test).to be_successful
+    expect(test.output).to match(/shutdown received/)
   end
 
   it "catches the Shutdown" do
-    ruby = ruby_proc <<-EOS
+    test = RubyBlock.new do |helper|
       GracefulShutdown.new.handle_signals do
         begin
-          wait_for_signal 1.0
+          helper.wait_for_signal 1.0
         rescue Shutdown => shutdown
           raise shutdown
         else
           raise 'No Interrupt received'
         end
       end
-    EOS
+    end
 
-    ruby.run_and_send('INT')
+    test.run_and_send('INT')
 
-    expect(ruby).to be_successful
+    expect(test).to be_successful
   end
 
   it "restores existing signal handlers" do
-    ruby = ruby_proc <<-EOS
+    test = RubyBlock.new do |helper|
       trap('INT') do
         puts 'default interrupt'
         exit
@@ -68,25 +64,25 @@ describe GracefulShutdown do
         # work
       end
 
-      wait_for_signal 1.0
-    EOS
+      helper.wait_for_signal 1.0
+    end
 
-    ruby.run_and_send('INT')
+    test.run_and_send('INT')
 
-    expect(ruby).to be_successful
-    expect(ruby.output).to match(/default interrupt/)
+    expect(test).to be_successful
+    expect(test.output).to match(/default interrupt/)
   end
 
   it "handles signals other than interrupt" do
-    ruby = ruby_proc <<-EOS
+    test = RubyBlock.new do |helper|
       GracefulShutdown.new.handle_signals('USR2') do
-        wait_for_signal 1.0
+        helper.wait_for_signal 1.0
         raise 'No Interrupt received'
       end
-    EOS
+    end
 
-    ruby.run_and_send('USR2')
+    test.run_and_send('USR2')
 
-    expect(ruby).to be_successful
+    expect(test).to be_successful
   end
 end
