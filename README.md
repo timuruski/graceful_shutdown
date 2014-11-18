@@ -1,6 +1,8 @@
 # GracefulShutdown
 
 [![Gem Version](https://badge.fury.io/rb/graceful_shutdown.svg)](http://badge.fury.io/rb/graceful_shutdown)
+[![Build
+Status](https://travis-ci.org/timuruski/graceful_shutdown.svg)](https://travis-ci.org/timuruski/graceful_shutdown)
 
 A tiny helper for handling signals and shutting down your program
 safely.
