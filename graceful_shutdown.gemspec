@@ -1,9 +1,13 @@
 # -*- encoding: utf-8 -*-
 # Hi, mom!
 
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'graceful_shutdown'
+
 Gem::Specification.new do |gem|
   gem.name        = 'graceful_shutdown'
-  gem.version     = '1.0.0'
+  gem.version     = GracefulShutdown::VERSION
   gem.platform    = Gem::Platform::RUBY
   gem.license     = 'MIT'
   gem.author      = 'Tim Uruski'

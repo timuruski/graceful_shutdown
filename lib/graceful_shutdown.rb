@@ -34,6 +34,8 @@ class Shutdown < RuntimeError
 end
 
 class GracefulShutdown
+  VERSION = '1.0.0'
+
   DEFAULT_SIGNALS = ['INT', 'TERM']
   HANDLER = proc { raise Shutdown }
 
