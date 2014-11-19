@@ -16,5 +16,6 @@ Gem::Specification.new do |gem|
   gem.files       = ['lib/graceful_shutdown.rb']
   gem.test_files  = gem.files.grep(/spec\//)
 
+  gem.add_development_dependency 'rake', '~> 10.0'
   gem.add_development_dependency 'rspec', '~> 3.0'
 end
